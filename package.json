@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "description": "Utility for automated system backup",
   "author": "jerome@phoenix-it-services.com",
-  "main": "lib/index.js",
+  "bin": {
+    "system-backup": "lib/index.js"
+  },
   "scripts": {
-	"dev" : "gulp clean && gulp dev",
+    "dev": "gulp clean && gulp dev",
     "build": "babel src --out-dir lib",
     "test": "node lib/index.js"
   },
