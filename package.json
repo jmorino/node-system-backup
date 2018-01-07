@@ -3,12 +3,27 @@
   "version": "0.1.0",
   "description": "Utility for automated system backup",
   "author": "jerome@phoenix-it-services.com",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "node src/index.js"
+	"dev" : "gulp clean && gulp dev",
+    "build": "babel src --out-dir lib",
+    "test": "node lib/index.js"
   },
   "repository": {
     "type": "git",
     "url": "ssh://git@git.phoenix-it-services.com:2222/infra/node-system-backup.git"
+  },
+  "dependencies": {
+    "commander": "^2.12.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.0",
+    "gulp-cached": "^1.1.1",
+    "gulp-plumber": "^1.2.0",
+    "gulp-sourcemaps": "^2.6.3"
   }
 }
