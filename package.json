@@ -1,0 +1,14 @@
+{
+  "name": "system-backup",
+  "version": "0.1.0",
+  "description": "Utility for automated system backup",
+  "author": "jerome@phoenix-it-services.com",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@git.phoenix-it-services.com:2222/infra/node-system-backup.git"
+  }
+}
