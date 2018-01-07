@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 import program from 'commander'
+import Config from './Config'
+import { handleErrors } from './utils'
 
 
 program
@@ -12,23 +14,24 @@ program
 program
 	.command('backup [type]')
 	.description('perform a backup of the system')
-	.action((type, options) => {
-		console.log(type, 'backup', options.config, options.dryRun);
-	});
+	.action(handleErrors((type, options) => {
+		const config = new Config(options.config);
+		console.log(type, 'backup', config, options.dryRun);
+	}));
 
 program
 	.command('restore [date]')
 	.description('restore the system')
-	.action((date, options) => {
+	.action(handleErrors((date, options) => {
 		console.log('restore @', date, options.config, options.dryRun);
-	});
+	}));
 
 program
 	.command('list')
 	.description('list all availbale backups')
-	.action((options) => {
+	.action(handleErrors((options) => {
 		console.log('run list', options.config, options.dryRun);
-	});
+	}));
 
 
 program.parse(process.argv);
