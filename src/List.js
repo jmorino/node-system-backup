@@ -12,31 +12,32 @@ export default class List {
 		this.options = options;
 	}
 
+	//=================================================================================================================
 
 	display() {
 		const backups = this.backups();
+
 		console.log('Available backups:');
 		backups.forEach(bkp => {
-			if (bkp.type === Full) {
-				console.log('  ' + chalk.red(bkp.name));
+			if (bkp.parent === bkp.name) {
+				console.log('  ' + chalk.red(bkp.name + ' - full backup'));
 			}
 			else {
-				console.log('  ' + chalk.cyan(bkp.name));
+				console.log('  ' + chalk.cyan(bkp.name + ' - incremental backup'));
 			}
 		});
 	}
 
+	//=================================================================================================================
+	
 	backups() {
 		// const files = fs.readdirSync(path.resolve(this.config.backupDir));
 		const files = find.fileSync(/\.tar$/, path.resolve(this.config.backupDir));
 		return files.map(filepath => {
-			const file = path.parse(filepath);
+			const file   = path.parse(filepath);
 			const parent = path.basename(file.dir);
-			return {
-				filepath,
-				name : file.name,
-				type : parent === file.name ? Full : Incr,
-			};
+			const name   = file.name;
+			return { filepath, parent, name };
 		});
 	}
 }
