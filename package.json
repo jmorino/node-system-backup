@@ -16,7 +16,9 @@
     "url": "ssh://git@git.phoenix-it-services.com:2222/infra/node-system-backup.git"
   },
   "dependencies": {
-    "commander": "^2.12.2"
+    "chalk": "^2.3.0",
+    "commander": "^2.12.2",
+    "find": "^0.2.8"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

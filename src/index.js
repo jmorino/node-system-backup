@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 import program from 'commander'
-import Config from './Config'
 import { handleErrors } from './utils'
+import Config from './Config'
+import List from './List'
 
 
 program
@@ -30,7 +31,9 @@ program
 	.command('list')
 	.description('list all availbale backups')
 	.action(handleErrors((options) => {
-		console.log('run list', options.config, options.dryRun);
+		const config = new Config(options.config);
+		const list = new List(config, options);
+		list.display();
 	}));
 
 
