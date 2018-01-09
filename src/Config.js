@@ -32,5 +32,7 @@ export default class Config {
 		});
 
 		// TODO finish this
+		// optional keys, with default values
+		this.excludes = [this.backupDir].concat(this.excludes || []);
 	}
 }
