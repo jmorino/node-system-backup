@@ -1,3 +1,4 @@
+import { mkdirSync } from 'fs'
 import path, { relative } from 'path'
 import { execSync } from 'child_process'
 import chalk from 'chalk'
@@ -18,15 +19,30 @@ export default class BackupCreator {
 		const isDryRun = !!this.options.dryRun;
 		const basename = (new Date()).toISOString().slice(0, 10);
 		const ext = 'tar.gz';
+		const filename = `${basename}.${ext}`;
 
 		if (isIncr) {
+			// find the parent backup to create the new incremental backup against
 			const list = new List(this.config);
 			const parent = list.findParent(basename);
 
 			// TODO check if parent === basename: backup already exists for today
 
+			// run backup
 			const dir = path.parse(parent.filepath).dir;
-			const filename = `${basename}.${ext}`;
+			this._exec({ dir, filename });
+		}
+		else {
+			// create a new dir for the full backup
+			const dir = path.resolve(path.join(this.config.backupDir, basename));
+			if (this.options.dryRun) {
+				console.log(chalk.bold.red('[DRY-RUN]'), chalk.red('create directory:'), dir);
+			}
+			else {
+				mkdirSync(dir);
+			}
+
+			// run backup
 			this._exec({ dir, filename });
 		}
 	}
@@ -56,7 +72,7 @@ export default class BackupCreator {
 			const relativePath = path.relative(target, excludedPath);
 			
 			// ignore all paths that are not included in target
-			if (relativePath.charAt(0) === '.') { return; }
+			if (relativePath.slice(0,2) === '..') { return; }
 
 			cmd.push(`--exclude="${relativePath}"`);
 		});
@@ -69,7 +85,7 @@ export default class BackupCreator {
 		
 		// execute command
 		if (this.options.dryRun) {
-			console.log(chalk.red('[DRY-RUN]'), chalk.cyan(cmdLine));
+			console.log(chalk.bold.red('[DRY-RUN]'), chalk.red('execute command:'), cmdLine);
 		}
 		else {
 			const result = execSync(cmdLine, { cwd : target });
