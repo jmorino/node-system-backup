@@ -31,13 +31,35 @@ export default class List {
 	//=================================================================================================================
 	
 	backups() {
-		// const files = fs.readdirSync(path.resolve(this.config.backupDir));
-		const files = find.fileSync(/\.tar$/, path.resolve(this.config.backupDir));
-		return files.map(filepath => {
-			const file   = path.parse(filepath);
-			const parent = path.basename(file.dir);
-			const name   = file.name;
-			return { filepath, parent, name };
-		});
+		const files = find.fileSync(/\.tar$/, path.resolve(this.config.backupDir))
+			.map(filepath => {
+				const file   = path.parse(filepath);
+				const dir    = file.dir;
+				const parent = path.basename(dir);
+				const name   = file.name;
+				return { filepath, parent, name, dir };
+			})
+			.sort((a, b) => {
+				if (a.name < b.name) { return -1; }
+				if (a.name > b.name) { return +1; }
+				return 0;
+			});
+		
+		return files;
+	}
+
+	//=================================================================================================================
+
+	findParent(basename) {
+		const backups = this.backups();
+		
+		// if name already exists, return its parent
+		const backup = backups.find(file => file.name === basename);
+		if (backup) {
+			return backups.find(file => file.name === backup.parent);
+		}
+
+		// otherwise, return the latest full backup that is anterior to name
+		return backups.filter(file => file.name === file.parent && file.name <= basename).pop();
 	}
 }
