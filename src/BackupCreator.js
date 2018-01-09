@@ -61,10 +61,8 @@ export default class BackupCreator {
 		const cmd = ['tar', '-czvpf', `"${filepath}"`];
 
 		// append options: incremental
-		if (this.options.incr) {
-			const manifest = path.join(dir, 'MANIFEST');
-			cmd.push(`--listed-incremental="${manifest}"`);
-		}
+		const manifest = path.join(dir, 'MANIFEST');
+		cmd.push(`--listed-incremental="${manifest}"`);
 
 		// append options: excluded directories
 		this.config.excludes.forEach(excludedDir => {
