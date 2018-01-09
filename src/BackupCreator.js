@@ -1,4 +1,4 @@
-import path from 'path'
+import path, { relative } from 'path'
 import { execSync } from 'child_process'
 import chalk from 'chalk'
 import List from './List'
@@ -38,24 +38,30 @@ export default class BackupCreator {
 
 
 	_exec({ dir, filename }) {
+		const filepath = path.join(dir, filename);
+		const target = path.resolve(this.config.target);
+		
 		// build command line
-		const filepath = path.resolve(dir, filename);
-		const cmd = ['tar', '-czvpf', filepath];
+		const cmd = ['tar', '-czvpf', `"${filepath}"`];
 
 		// append options: incremental
 		if (this.options.incr) {
-			const manifest = path.resolve(dir, 'MANIFEST');
-			cmd.push(`--listed-incremental=${manifest}`);
+			const manifest = path.join(dir, 'MANIFEST');
+			cmd.push(`--listed-incremental="${manifest}"`);
 		}
 
 		// append options: excluded directories
 		this.config.excludes.forEach(excludedDir => {
 			const excludedPath = path.resolve(excludedDir);
-			cmd.push(`--exclude="${excludedPath}"`);
+			const relativePath = path.relative(target, excludedPath);
+			
+			// ignore all paths that are not included in target
+			if (relativePath.charAt(0) === '.') { return; }
+
+			cmd.push(`--exclude="${relativePath}"`);
 		});
 
 		// append target
-		const target = path.resolve(this.config.target);
 		cmd.push(target);
 
 		// build final command line
@@ -63,7 +69,7 @@ export default class BackupCreator {
 		
 		// execute command
 		if (this.options.dryRun) {
-			console.log(chalk.green('[DRY-RUN]'), cmdLine);
+			console.log(chalk.red('[DRY-RUN]'), chalk.cyan(cmdLine));
 		}
 		else {
 			const result = execSync(cmdLine, { cwd : target });
