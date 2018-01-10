@@ -3,6 +3,7 @@ import path, { relative } from 'path'
 import { execSync } from 'child_process'
 import chalk from 'chalk'
 import List from './List'
+import { BACKUP_EXT } from './defaults'
 
 
 export default class BackupCreator {
@@ -18,7 +19,7 @@ export default class BackupCreator {
 		const isIncr = !!this.options.incr;
 		const isDryRun = !!this.options.dryRun;
 		const basename = (new Date()).toISOString().slice(0, 10);
-		const filename = `${basename}.${this.config.ext}`;
+		const filename = `${basename}.${BACKUP_EXT}`;
 
 		if (isIncr) {
 			// find the parent backup to create the new incremental backup against
