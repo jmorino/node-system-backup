@@ -1,14 +1,13 @@
 import path from 'path'
 import fs from 'fs'
 import { FileNotFoundError, InvalidJSONFileError, InvalidConfigurationError } from './errors'
+import { CONFIG_PATH } from './defaults'
 
-
-const DEFAULT_CONFIG_PATH = './config.json';
 
 export default class Config {
 
 	constructor(configPath) {
-		configPath = path.resolve(configPath || process.env.BACKUP_CONFIG || DEFAULT_CONFIG_PATH);
+		configPath = path.resolve(configPath || process.env.BACKUP_CONFIG || CONFIG_PATH);
 
 		try {
 			const configRaw = fs.readFileSync(configPath, 'utf8');
@@ -36,7 +35,5 @@ export default class Config {
 		// TODO finish this
 		// optional keys, with default values
 		this.excludes = [this.backupDir].concat(this.excludes || []);
-		this.ext = this.ext || 'tar.gz';
 	}
-
 }

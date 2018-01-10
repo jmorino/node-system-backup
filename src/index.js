@@ -5,6 +5,7 @@ import { handleErrors } from './utils'
 import Config from './Config'
 import List from './List'
 import BackupCreator from './BackupCreator'
+import { CONFIG_PATH_TEXT } from './defaults'
 
 
 program
@@ -14,8 +15,8 @@ program
 program
 	.command('backup')
 	.description('perform a backup of the system')
-	.option('-c, --config <path>', 'set config path. defaults to /root/.backup/config.json')
-	.option('-d, --dry-run', 'simulate the command but do not write any file')
+	.option('-c, --config <file>', `set config file (default: ${CONFIG_PATH_TEXT})`)
+	.option('-d, --dry-run', 'simulate the command but do not change anything')
 	.option('-i, --incr', 'perform an incremental backup')
 	.action(handleErrors((options) => {
 		const config = new Config(options.config);
@@ -26,8 +27,8 @@ program
 program
 	.command('restore <date>')
 	.description('restore the system')
-	.option('-c, --config <path>', 'set config path. defaults to /root/.backup/config.json')
-	.option('-d, --dry-run', 'simulate the command but do not write any file')
+	.option('-c, --config <file>', `set config file (default: ${CONFIG_PATH_TEXT})`)
+	.option('-d, --dry-run', 'simulate the command but do not change anything')
 	.action(handleErrors((date, options) => {
 		console.log('restore @', date, options.config, options.dryRun);
 	}));
@@ -35,8 +36,8 @@ program
 program
 	.command('list')
 	.description('list all available backups')
-	.option('-c, --config <path>', 'set config path. defaults to /root/.backup/config.json')
-	.option('-d, --dry-run', 'simulate the command but do not write any file')
+	.option('-c, --config <file>', `set config file (default: ${CONFIG_PATH_TEXT})`)
+	.option('-d, --dry-run', 'simulate the command but do not change anything')
 	.action(handleErrors((options) => {
 		const config = new Config(options.config);
 		const list = new List(config, options);
