@@ -3,6 +3,7 @@ import fs from 'fs'
 import find from 'find'
 import chalk from 'chalk';
 import { Full, Incr } from './types'
+import { BACKUP_EXT } from './defaults'
 
 
 export default class List {
@@ -17,7 +18,14 @@ export default class List {
 	display() {
 		const backups = this.backups();
 
+		if (!backups.length) {
+			console.log(chalk.red('No backup found.'));
+			return;
+		}
+
+		console.log('');
 		console.log('Available backups:');
+		console.log('------------------');
 		backups.forEach(bkp => {
 			if (bkp.parent === bkp.name) {
 				console.log('  ' + chalk.red(bkp.name + ' - full backup'));
@@ -26,18 +34,20 @@ export default class List {
 				console.log('  ' + chalk.cyan(bkp.name + ' - incremental backup'));
 			}
 		});
+		console.log('');
 	}
 
 	//=================================================================================================================
 	
 	backups() {
-		const regex = new RegExp(`.${this.config.ext}$`);
+		const ext = '.' + BACKUP_EXT;
+		const regex = new RegExp(ext + '$');
 		const files = find.fileSync(regex, path.resolve(this.config.backupDir))
 			.map(filepath => {
 				const file   = path.parse(filepath);
 				const dir    = file.dir;
 				const parent = path.basename(dir);
-				const name   = file.name;
+				const name   = path.basename(file.base, ext);
 				return { filepath, parent, name, dir };
 			})
 			.sort((a, b) => {
