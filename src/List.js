@@ -31,7 +31,8 @@ export default class List {
 	//=================================================================================================================
 	
 	backups() {
-		const files = find.fileSync(/\.tar$/, path.resolve(this.config.backupDir))
+		const regex = new RegExp(`.${this.config.ext}$`);
+		const files = find.fileSync(regex, path.resolve(this.config.backupDir))
 			.map(filepath => {
 				const file   = path.parse(filepath);
 				const dir    = file.dir;

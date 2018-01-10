@@ -18,8 +18,7 @@ export default class BackupCreator {
 		const isIncr = !!this.options.incr;
 		const isDryRun = !!this.options.dryRun;
 		const basename = (new Date()).toISOString().slice(0, 10);
-		const ext = 'tar.gz';
-		const filename = `${basename}.${ext}`;
+		const filename = `${basename}.${this.config.ext}`;
 
 		if (isIncr) {
 			// find the parent backup to create the new incremental backup against
