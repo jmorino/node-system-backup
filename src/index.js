@@ -34,7 +34,7 @@ program
 
 program
 	.command('list')
-	.description('list all availbale backups')
+	.description('list all available backups')
 	.option('-c, --config <path>', 'set config path. defaults to /root/.backup/config.json')
 	.option('-d, --dry-run', 'simulate the command but do not write any file')
 	.action(handleErrors((options) => {
