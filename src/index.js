@@ -5,6 +5,7 @@ import { handleErrors } from './utils'
 import Config from './Config'
 import List from './List'
 import BackupCreator from './BackupCreator'
+import BackupRestorer from './BackupRestorer'
 import { CONFIG_PATH_TEXT } from './defaults'
 
 
@@ -30,7 +31,9 @@ program
 	.option('-c, --config <file>', `set config file (default: ${CONFIG_PATH_TEXT})`)
 	.option('-d, --dry-run', 'simulate the command but do not change anything')
 	.action(handleErrors((date, options) => {
-		console.log('restore @', date, options.config, options.dryRun);
+		const config = new Config(options.config);
+		const backupRestorer = new BackupRestorer({ config, options });
+		backupRestorer.restore(date);
 	}));
 
 program
