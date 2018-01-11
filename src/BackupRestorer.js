@@ -63,17 +63,18 @@ export default class BackupRestorer {
 
 
 	_exec({ filepath }) {
-		const target = path.resolve(this.config.target);
+		const config = this.config;
+		const target = path.resolve(config.target);
 		
 		// build command line: tar -xvpzf "$dir/$f" --numeric-owner >> $logFile 2>> $errFile
 		const cmd = ['tar'];
 		cmd.push('--extract');
-		cmd.push('--verbose');
-		cmd.push('--preserve-permissions');
-		cmd.push('--gzip');
 		cmd.push('--file', `"${filepath}"`);
 		cmd.push('--listed-incremental=/dev/null'); // useful ??
+		cmd.push('--preserve-permissions');
 		cmd.push('--numeric-owner'); // preserve extracted files' UID
+		if (config.verbose)  { cmd.push('--verbose'); }
+		if (config.compress) { cmd.push('--gzip'); }
 
 		// build final command line
 		const cmdLine = cmd.join(' ');
