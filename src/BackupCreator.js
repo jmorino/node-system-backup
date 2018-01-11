@@ -54,18 +54,22 @@ export default class BackupCreator {
 
 
 	_exec({ dir, filename }) {
+		const config = this.config;
 		const filepath = path.join(dir, filename);
-		const target = path.resolve(this.config.target);
-		
-		// build command line
-		const cmd = ['tar', '-czvpf', `"${filepath}"`];
-
-		// append options: incremental
+		const target = path.resolve(config.target);
 		const manifest = path.join(dir, 'MANIFEST');
+		
+		// build command line: tar -czvpf "$filepath"
+		const cmd = ['tar'];
+		cmd.push('--create');
+		cmd.push('--file', `"${filepath}"`);
+		cmd.push('--preserve-permissions');
 		cmd.push(`--listed-incremental="${manifest}"`);
+		if (config.verbose)  { cmd.push('--verbose'); }
+		if (config.compress) { cmd.push('--gzip'); }
 
 		// append options: excluded directories
-		this.config.excludes.forEach(excludedDir => {
+		config.excludes.forEach(excludedDir => {
 			const excludedPath = path.resolve(excludedDir);
 			const relativePath = path.relative(target, excludedPath);
 			
@@ -83,6 +87,7 @@ export default class BackupCreator {
 		
 		// execute command
 		if (this.options.dryRun) {
+			console.log(chalk.bold.red('[DRY-RUN]'), chalk.red("cd'ing to:"), target);
 			console.log(chalk.bold.red('[DRY-RUN]'), chalk.red('execute command:'), cmdLine);
 		}
 		else {
