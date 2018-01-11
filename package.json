@@ -1,6 +1,6 @@
 {
   "name": "system-backup",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Utility for automated system backup",
   "author": "jerome@phoenix-it-services.com",
   "bin": {
@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "gulp clean && gulp dev",
     "build": "babel src --out-dir lib",
-	"start": "chmod +x lib/index.js && BACKUP_CONFIG='config.json' lib/index.js"
+    "start": "chmod +x lib/index.js && BACKUP_CONFIG='config.json' lib/index.js"
   },
   "repository": {
     "type": "git",
