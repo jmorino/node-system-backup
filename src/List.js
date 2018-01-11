@@ -73,4 +73,17 @@ export default class List {
 		// otherwise, return the latest full backup that is anterior to name
 		return backups.filter(file => file.name === file.parent && file.name <= basename).pop();
 	}
+
+	//=================================================================================================================
+
+	findRestorationChain(basename) {
+		const backups = this.backups();
+
+		const target = backups.find(file => file.name === basename);
+		if (!target) { return []; }
+
+		const parent = backups.find(file => file.name === target.parent);
+
+		return backups.slice(backups.indexOf(parent), backups.indexOf(target) + 1);
+	}
 }
