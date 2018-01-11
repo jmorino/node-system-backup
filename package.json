@@ -7,12 +7,9 @@
     "system-backup": "lib/index.js"
   },
   "scripts": {
-	"env" : {
-		"BACKUP_CONFIG" : "config.json"
-	},
     "dev": "gulp clean && gulp dev",
     "build": "babel src --out-dir lib",
-	"start": "chmod +x lib/index.js && lib/index.js"
+	"start": "chmod +x lib/index.js && BACKUP_CONFIG='config.json' lib/index.js"
   },
   "repository": {
     "type": "git",
