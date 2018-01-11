@@ -19,7 +19,8 @@ export default class List {
 		const backups = this.backups();
 
 		if (!backups.length) {
-			console.log(chalk.red('No backup found.'));
+			console.log('');
+			console.log('No backup found.');
 			return;
 		}
 
