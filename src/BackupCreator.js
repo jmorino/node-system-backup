@@ -4,6 +4,7 @@ import { execSync } from 'child_process'
 import chalk from 'chalk'
 import List from './List'
 import { BACKUP_EXT } from './defaults'
+import { NoFullBackupFoundError } from './errors'
 
 
 export default class BackupCreator {
@@ -25,6 +26,7 @@ export default class BackupCreator {
 			// find the parent backup to create the new incremental backup against
 			const list = new List(this.config);
 			const parent = list.findParent(basename);
+			if (!parent) { throw new NoFullBackupFoundError('No previous full backup found'); }
 
 			// TODO check if parent === basename: backup already exists for today
 
