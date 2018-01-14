@@ -2,7 +2,7 @@
   "name": "system-backup",
   "version": "0.1.2",
   "description": "Utility for automated system backup",
-  "author": "jerome@phoenix-it-services.com",
+  "author": "jerome.morino@gmail.com",
   "bin": {
     "system-backup": "lib/index.js"
   },
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@git.phoenix-it-services.com:2222/infra/node-system-backup.git"
+    "url": "ssh://git@github.com:jmorino/node-system-backup.git"
   },
   "dependencies": {
     "chalk": "^2.3.0",
