@@ -6,6 +6,7 @@ import Config from './Config'
 import List from './List'
 import BackupCreator from './BackupCreator'
 import BackupRestorer from './BackupRestorer'
+import BackupInspector from './BackupInspector'
 import { CONFIG_PATH_TEXT } from './defaults'
 
 
@@ -40,11 +41,20 @@ program
 	.command('list')
 	.description('list all available backups')
 	.option('-c, --config <file>', `set config file (default: ${CONFIG_PATH_TEXT})`)
-	.option('-d, --dry-run', 'simulate the command but do not change anything')
 	.action(handleErrors((options) => {
 		const config = new Config(options.config);
 		const list = new List(config, options);
 		list.display();
+	}));
+
+	program
+	.command('inspect <date>')
+	.description('inspect a backup')
+	.option('-c, --config <file>', `set config file (default: ${CONFIG_PATH_TEXT})`)
+	.action(handleErrors((date, options) => {
+		const config = new Config(options.config);
+		const backupInspector = new BackupInspector({ config, options });
+		backupInspector.inspect(date);
 	}));
 
 
