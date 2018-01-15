@@ -1,8 +1,8 @@
 import path from 'path'
 import fs from 'fs'
+import SimpleSchema from 'simpl-schema'
 import { FileNotFoundError, InvalidJSONFileError, InvalidConfigurationError } from './errors'
 import { CONFIG_PATH } from './defaults'
-
 
 export default class Config {
 
@@ -12,30 +12,38 @@ export default class Config {
 		try {
 			const configRaw = fs.readFileSync(configPath, 'utf8');
 			const config = JSON.parse(configRaw);
-			Object.assign(this, config);
+			Object.assign(this, this.validate(config));
 		}
 		catch(e) {
 			if (e.code === 'ENOENT') { throw new FileNotFoundError(e); }
 			throw new InvalidJSONFileError(`Invalid configuration file: ${e}.`);
 		}
 
-		this.validate();
 	}
 
 	//=================================================================================================================
 
-	validate() {
-		// mandatory keys
-		['backupDir', 'target'].forEach(key => {
-			if (!this[key]) {
-				throw new InvalidConfigurationError(`Missing configuration entry: "${key}" is mandatory.`);
-			}
+	validate(config) {
+		const schema = new SimpleSchema({
+			'compress': { type: Boolean, defaultValue: true },
+			'verbose': { type: Boolean, defaultValue: false },
+
+			'includes': { type: Array, defaultValue: [], minCount: 1 },
+			'includes.$': String,
+			'excludes': { type: Array, defaultValue: [] },
+			'excludes.$': String,
+			
+			'backupDir': String,
 		});
 
-		// TODO finish this
-		// optional keys, with default values
-		this.excludes = [this.backupDir].concat(this.excludes || []);
-		this.compress = this.compress == null || !!this.compress;
-		this.verbose  = !!this.verbose;
+		const validationContext = schema.newContext();
+		const cleanConfig = schema.clean(config);
+		validationContext.validate(cleanConfig);
+
+		if (!validationContext.isValid()) {
+			throw new InvalidConfigurationError(JSON.stringify(validationContext.validationErrors()));
+		}
+
+		return cleanConfig;
 	}
 }

@@ -18,7 +18,8 @@
   "dependencies": {
     "chalk": "^2.3.0",
     "commander": "^2.12.2",
-    "find": "^0.2.8"
+    "find": "^0.2.8",
+    "simpl-schema": "^1.4.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
