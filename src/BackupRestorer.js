@@ -5,6 +5,7 @@ import chalk from 'chalk'
 import List from './List'
 import { BACKUP_EXT } from './defaults'
 import { BackupNotFoundError } from './errors'
+import { separator } from './utils'
 
 
 export default class BackupRestorer {
@@ -26,34 +27,15 @@ export default class BackupRestorer {
 		const backups = list.findRestorationChain(date);
 		if (!backups.length) { throw new BackupNotFoundError(`Backup ${date} not found`); }
 
+		// display messages and run restoration chain
 		console.log('');
-		console.log('Restoring backups:');
-		console.log('------------------');
 		backups.forEach(backup => {
-			console.log(chalk.red('  ' + backup.name));
+			const message = `Restoring ${backup.filepath}`;
+			console.log(chalk.blue(message));
+			console.log(chalk.blue(separator(message.length)));
 			this._exec(backup);
+			console.log('');
 		});
-		console.log('');
-
-		// 	// TODO check if parent === basename: backup already exists for today
-
-		// 	// run backup
-		// 	const dir = path.parse(parent.filepath).dir;
-		// 	this._exec({ dir, filename });
-		// }
-		// else {
-		// 	// create a new dir for the full backup
-		// 	const dir = path.resolve(path.join(this.config.backupDir, basename));
-		// 	if (this.options.dryRun) {
-		// 		console.log(chalk.bold.red('[DRY-RUN]'), chalk.red('create directory:'), dir);
-		// 	}
-		// 	else {
-		// 		mkdirSync(dir);
-		// 	}
-
-		// 	// run backup
-		// 	this._exec({ dir, filename });
-		// }
 	}
 
 
@@ -85,7 +67,9 @@ export default class BackupRestorer {
 			console.log(chalk.bold.red('[DRY-RUN]'), chalk.red('execute command:'), cmdLine);
 		}
 		else {
-			const result = execSync(cmdLine, { cwd : target });
+			const stdout = config.verbose ? process.stdout : 'ignore';
+			const stdio = ['ignore', stdout, process.stderr];
+			const result = execSync(cmdLine, { stdio, cwd : target });
 		}
 	}
 }
