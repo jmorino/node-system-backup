@@ -10,3 +10,16 @@ export function handleErrors(callback) {
 		}
 	}
 }
+
+//=================================================================================================================
+
+export function toArray(obj) {
+	return Array.isArray(obj) ? obj : [obj];
+}
+
+
+//=================================================================================================================
+
+export function separator(length, char = '-') {
+	return (new Array(length)).fill(char).join('');
+}
