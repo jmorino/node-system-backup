@@ -29,11 +29,20 @@ export default class Config {
 			'verbose': { type: Boolean, defaultValue: false },
 
 			'includes': { type: Array, defaultValue: [], minCount: 1 },
-			'includes.$': String,
+			'includes.$': { type: String, custom() {
+				if (!path.isAbsolute(this.value)) {
+					return 'Paths in "includes" field should be absolute';
+				}
+			}},
 			'excludes': { type: Array, defaultValue: [] },
 			'excludes.$': String,
 			
-			'backupDir': String,
+			'storage': Object,
+			'storage.type': { type: String, allowedValues: ['fs','nfs'] },
+			'storage.path': String,
+			'storage.server': { type: String, optional: true },
+			'storage.user': { type: String, optional: true },
+			'storage.mountPoint': { type: String, optional: true },
 		});
 
 		const validationContext = schema.newContext();
