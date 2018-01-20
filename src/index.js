@@ -8,6 +8,7 @@ import BackupCreator from './BackupCreator'
 import BackupRestorer from './BackupRestorer'
 import BackupInspector from './BackupInspector'
 import { CONFIG_PATH_TEXT } from './defaults'
+import { getStorage } from './storage/factory'
 
 
 program
@@ -22,8 +23,14 @@ program
 	.option('-i, --incr', 'perform an incremental backup')
 	.action(handleErrors((options) => {
 		const config = new Config(options.config);
-		const backupCreator = new BackupCreator({ config, options });
+		const storage = getStorage(config.storage);
+
+		storage.prepare(options);
+		
+		const backupCreator = new BackupCreator({ config, storage, options });
 		backupCreator.backup();
+
+		storage.clean(options);
 	}));
 
 program
@@ -33,8 +40,14 @@ program
 	.option('-d, --dry-run', 'simulate the command but do not change anything')
 	.action(handleErrors((date, options) => {
 		const config = new Config(options.config);
-		const backupRestorer = new BackupRestorer({ config, options });
+		const storage = getStorage(config.storage);
+
+		storage.prepare(options);
+		
+		const backupRestorer = new BackupRestorer({ config, storage, options });
 		backupRestorer.restore(date);
+
+		storage.clean(options);
 	}));
 
 program
@@ -43,8 +56,14 @@ program
 	.option('-c, --config <file>', `set config file (default: ${CONFIG_PATH_TEXT})`)
 	.action(handleErrors((options) => {
 		const config = new Config(options.config);
-		const list = new List(config, options);
+		const storage = getStorage(config.storage);
+
+		storage.prepare(options);
+		
+		const list = new List(config, storage, options);
 		list.display();
+
+		storage.clean(options);
 	}));
 
 	program
@@ -53,8 +72,14 @@ program
 	.option('-c, --config <file>', `set config file (default: ${CONFIG_PATH_TEXT})`)
 	.action(handleErrors((date, options) => {
 		const config = new Config(options.config);
-		const backupInspector = new BackupInspector({ config, options });
+		const storage = getStorage(config.storage);
+
+		storage.prepare(options);
+		
+		const backupInspector = new BackupInspector({ config, storage, options });
 		backupInspector.inspect(date);
+
+		storage.clean(options);
 	}));
 
 
