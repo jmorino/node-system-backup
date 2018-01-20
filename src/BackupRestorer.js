@@ -10,9 +10,10 @@ import { separator } from './utils'
 
 export default class BackupRestorer {
 
-	constructor({ config, options }) {
+	constructor({ config, storage, options }) {
 		this.config = config;
 		this.options = options;
+		this.storage = storage;
 	}
 
 	//=================================================================================================================
@@ -23,7 +24,7 @@ export default class BackupRestorer {
 		const filename = `${date}.${BACKUP_EXT}`;
 
 		// find the parent backup to restore
-		const list = new List(this.config);
+		const list = new List(this.config, this.storage, this.options);
 		const backups = list.findRestorationChain(date);
 		if (!backups.length) { throw new BackupNotFoundError(`Backup ${date} not found`); }
 
@@ -46,13 +47,13 @@ export default class BackupRestorer {
 
 	_exec({ filepath }) {
 		const config = this.config;
-		const target = path.resolve(config.target);
+		const cwd = '/';
 		
 		// build command line: tar -xvpzf "$dir/$f" --numeric-owner >> $logFile 2>> $errFile
 		const cmd = ['tar'];
 		cmd.push('--extract');
 		cmd.push('--file', `"${filepath}"`);
-		cmd.push('--listed-incremental=/dev/null'); // useful ??
+		// cmd.push('--listed-incremental=/dev/null'); // useful ??
 		cmd.push('--preserve-permissions');
 		cmd.push('--numeric-owner'); // preserve extracted files' UID
 		if (config.verbose)  { cmd.push('--verbose'); }
@@ -63,13 +64,13 @@ export default class BackupRestorer {
 		
 		// execute command
 		if (this.options.dryRun) {
-			console.log(chalk.bold.red('[DRY-RUN]'), chalk.red("cd'ing to:"), target);
+			console.log(chalk.bold.red('[DRY-RUN]'), chalk.red("cd'ing to:"), cwd);
 			console.log(chalk.bold.red('[DRY-RUN]'), chalk.red('execute command:'), cmdLine);
 		}
 		else {
 			const stdout = config.verbose ? process.stdout : 'ignore';
 			const stdio = ['ignore', stdout, process.stderr];
-			const result = execSync(cmdLine, { stdio, cwd : target });
+			const result = execSync(cmdLine, { cwd, stdio });
 		}
 	}
 }

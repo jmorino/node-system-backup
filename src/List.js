@@ -8,9 +8,10 @@ import { BACKUP_EXT } from './defaults'
 
 export default class List {
 
-	constructor(config, options) {
+	constructor(config, storage, options) {
 		this.config = config;
 		this.options = options;
+		this.storage = storage;
 	}
 
 	//=================================================================================================================
@@ -43,7 +44,7 @@ export default class List {
 	backups() {
 		const ext = '.' + BACKUP_EXT;
 		const regex = new RegExp(ext + '$');
-		const files = find.fileSync(regex, path.resolve(this.config.backupDir))
+		const files = this.storage.list(regex)
 			.map(filepath => {
 				const file   = path.parse(filepath);
 				const dir    = file.dir;

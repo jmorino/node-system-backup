@@ -10,9 +10,10 @@ import { separator } from './utils'
 
 export default class BackupInspector {
 
-	constructor({ config, options }) {
+	constructor({ config, storage, options }) {
 		this.config = config;
 		this.options = options;
+		this.storage = storage;
 	}
 
 	//=================================================================================================================
@@ -23,7 +24,7 @@ export default class BackupInspector {
 		const filename = `${date}.${BACKUP_EXT}`;
 
 		// find the parent backup to restore
-		const list = new List(this.config);
+		const list = new List(this.config, this.storage, this.options);
 		const backups = list.backups();
 		const backup = backups.find(file => file.name === date);
 		if (!backup) { throw new BackupNotFoundError(`Backup ${date} not found`); }
@@ -43,8 +44,6 @@ export default class BackupInspector {
 
 
 	_exec({ filepath }) {
-		const config = this.config;
-		
 		// build command line: tar -tf "$dir/$f"
 		const cmd = ['tar'];
 		cmd.push('-t');
