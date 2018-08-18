@@ -16,19 +16,19 @@
     "url": "ssh://git@github.com:jmorino/node-system-backup.git"
   },
   "dependencies": {
-    "chalk": "^2.3.0",
-    "commander": "^2.12.2",
-    "find": "^0.2.8",
-    "simpl-schema": "^1.4.1"
+    "chalk": "^2.4.1",
+    "commander": "^2.17.1",
+    "find": "^0.2.9",
+    "simpl-schema": "^1.5.3"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "del": "^3.0.0",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.0",
+    "gulp": "^4.0.0",
+    "gulp-babel": "^7.0.1",
     "gulp-cached": "^1.1.1",
     "gulp-plumber": "^1.2.0",
-    "gulp-sourcemaps": "^2.6.3"
+    "gulp-sourcemaps": "^2.6.4"
   }
 }
